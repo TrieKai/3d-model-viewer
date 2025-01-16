@@ -1,6 +1,5 @@
-import React from 'react';
-import ModelViewer from './components/ModelViewer';
-import Controls from './components/Controls';
+import ModelViewer from "./components/ModelViewer";
+import Controls from "./components/Controls";
 
 function App() {
   return (

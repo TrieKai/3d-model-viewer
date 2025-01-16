@@ -1,5 +1,3 @@
-import * as THREE from 'three';
-
 export interface ModelInfo {
   id: string;
   name: string;
@@ -29,14 +27,4 @@ export interface ModelControls {
   setShowAxes: (value: boolean) => void;
   setCameraPosition: (position: [number, number, number]) => void;
   setIsPlaying: (value: boolean) => void;
-}
-
-declare global {
-  namespace JSX {
-    interface IntrinsicElements {
-      arrowHelper: THREE.Object3DProps & {
-        args: [THREE.Vector3, THREE.Vector3, number, number | string];
-      };
-    }
-  }
 }
