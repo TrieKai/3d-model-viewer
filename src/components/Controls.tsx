@@ -26,9 +26,13 @@ export default function Controls() {
     setShowAxes,
     isPlaying,
     setIsPlaying,
+    setModelUrl,
+    selectedAnimation,
+    setSelectedAnimation,
+    animationNames,
   } = useViewerStore();
 
-  const handleScreenshot = () => {
+  const handleScreenshot = (): void => {
     const canvas = document.querySelector("canvas");
     if (canvas) {
       const link = document.createElement("a");
@@ -38,11 +42,13 @@ export default function Controls() {
     }
   };
 
-  const handleShare = async () => {
+  const handleShare = async (): Promise<void> => {
     try {
       const canvas = document.querySelector("canvas");
       if (canvas) {
-        const blob = await new Promise((resolve) => canvas.toBlob(resolve));
+        const blob = await new Promise<Blob | null>((resolve) =>
+          canvas.toBlob(resolve)
+        );
         if (blob) {
           await navigator.share({
             files: [new File([blob], "model-view.png", { type: "image/png" })],
@@ -53,6 +59,13 @@ export default function Controls() {
     } catch (error) {
       console.error("Error sharing:", error);
     }
+  };
+
+  const handleReset = (): void => {
+    setLightIntensity(1);
+    setIsPlaying(false);
+    setSelectedAnimation(null);
+    setModelUrl(null);
   };
 
   return (
@@ -106,25 +119,28 @@ export default function Controls() {
             className="w-24"
           />
         </div>
-        <div className="flex gap-2">
-          <button
-            onClick={() => setIsPlaying(!isPlaying)}
-            className="p-2 rounded-lg bg-gray-200 hover:bg-gray-300"
-            title={isPlaying ? "Pause Animation" : "Play Animation"}
-          >
-            {isPlaying ? <Pause size={20} /> : <Play size={20} />}
-          </button>
-          <button
-            onClick={() => {
-              setIsPlaying(false);
-              // Reset animation logic here
-            }}
-            className="p-2 rounded-lg bg-gray-200 hover:bg-gray-300"
-            title="Reset Animation"
-          >
-            <RotateCcw size={20} />
-          </button>
-        </div>
+        {animationNames.length > 0 && (
+          <div className="flex items-center gap-2">
+            <select
+              value={selectedAnimation || ""}
+              onChange={(e) => setSelectedAnimation(e.target.value)}
+              className="px-2 py-1 rounded-lg bg-gray-200"
+            >
+              {animationNames.map((name) => (
+                <option key={name} value={name}>
+                  {name}
+                </option>
+              ))}
+            </select>
+            <button
+              onClick={() => setIsPlaying(!isPlaying)}
+              className="p-2 rounded-lg bg-gray-200 hover:bg-gray-300"
+              title={isPlaying ? "Pause Animation" : "Play Animation"}
+            >
+              {isPlaying ? <Pause size={20} /> : <Play size={20} />}
+            </button>
+          </div>
+        )}
         <button
           onClick={handleScreenshot}
           className="p-2 rounded-lg bg-gray-200 hover:bg-gray-300"
@@ -138,6 +154,13 @@ export default function Controls() {
           title="Share"
         >
           <Share2 size={20} />
+        </button>
+        <button
+          onClick={handleReset}
+          className="p-2 rounded-lg bg-gray-200 hover:bg-gray-300"
+          title="Reset"
+        >
+          <RotateCcw size={20} />
         </button>
       </div>
     </div>
